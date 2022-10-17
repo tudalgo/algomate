@@ -1,0 +1,10 @@
+[versions]
+algoutils = "0.3.1"
+jagr = "0.6.1"
+junit = "5.9.1"
+kotlin = "1.7.20"
+
+[plugins]
+gradle-publish = "com.gradle.plugin-publish:1.0.0"
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+style = { id = "org.sourcegrade.style", version = "2.1.0" }
