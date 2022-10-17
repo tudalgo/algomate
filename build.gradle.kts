@@ -1,11 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.sourcegrade.jagr.script.AlgoMatePublishPlugin
 
 @Suppress("DSL_SCOPE_VIOLATION") // https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     `java-gradle-plugin`
     alias(libs.plugins.gradle.publish)
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.style)
 }
+
+apply<AlgoMatePublishPlugin>()
 
 group = "org.tudalgo"
 version = file("version").readLines().first()
@@ -24,8 +28,10 @@ tasks {
         sourceCompatibility = "17"
         targetCompatibility = "17"
     }
+    withType<PublishToMavenRepository> {
+        onlyIf { project.version.toString().endsWith("-SNAPSHOT") }
+    }
 }
-
 
 gradlePlugin {
     plugins {
