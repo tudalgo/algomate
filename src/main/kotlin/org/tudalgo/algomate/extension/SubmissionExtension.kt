@@ -7,16 +7,10 @@ import javax.inject.Inject
 abstract class SubmissionExtension @Inject constructor(
     objectFactory: ObjectFactory,
 ) {
-    internal val assignmentIdProperty = objectFactory.property<String>()
     internal val studentIdProperty = objectFactory.property<String>()
     internal val firstNameProperty = objectFactory.property<String>()
     internal val lastNameProperty = objectFactory.property<String>()
 
-    var assignmentId: String?
-        get() = assignmentIdProperty.orNull
-        set(value) {
-            value?.also(assignmentIdProperty::set)
-        }
     var studentId: String?
         get() = studentIdProperty.orNull
         set(value) {

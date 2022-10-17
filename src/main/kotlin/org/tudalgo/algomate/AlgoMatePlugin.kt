@@ -14,6 +14,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
+import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
 
 @Suppress("unused")
@@ -25,6 +26,7 @@ class AlgoMatePlugin : Plugin<Project> {
         target.apply(plugin = "org.sourcegrade.jagr-gradle")
 
         // create and configure extensions
+        val exerciseExtension = target.extensions.create<ExerciseExtension>("exercise")
         val submissionExtension = target.extensions.create<SubmissionExtension>("submission")
 
         target.afterEvaluate {
@@ -33,15 +35,16 @@ class AlgoMatePlugin : Plugin<Project> {
             }
             if (submissionExtension.requireGraderPublic) {
                 target.tasks["mainBuildSubmission"].dependsOn("graderPublicRun")
+                target.tasks["graderPublicRun"].shouldRunAfter("test")
             }
         }
 
         target.extensions.getByType<JavaApplication>().apply {
-            mainClass.set(submissionExtension.assignmentIdProperty.map { "$it.Main" })
+            mainClass.set(exerciseExtension.assignmentId.map { "$it.Main" })
         }
 
         target.extensions.getByType<JagrExtension>().apply {
-            assignmentId.set(submissionExtension.assignmentIdProperty)
+            assignmentId.set(exerciseExtension.assignmentId)
             submissions {
                 create("main") { main ->
                     main.studentId.set(submissionExtension.studentIdProperty)
@@ -51,7 +54,7 @@ class AlgoMatePlugin : Plugin<Project> {
             }
             graders {
                 create("graderPublic") { graderPublic ->
-                    val id = submissionExtension.assignmentIdProperty
+                    val id = exerciseExtension.assignmentId
                     val idU = id.map { it.uppercase() }
                     graderPublic.graderName.set(idU.map { "FOP-2223-$it-Public" })
                     graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
