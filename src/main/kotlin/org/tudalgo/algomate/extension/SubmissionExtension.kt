@@ -32,4 +32,7 @@ abstract class SubmissionExtension @Inject constructor(
         set(value) {
             value?.also(lastNameProperty::set)
         }
+
+    var requireTests: Boolean = false
+    var requireGraderPublic: Boolean = false
 }

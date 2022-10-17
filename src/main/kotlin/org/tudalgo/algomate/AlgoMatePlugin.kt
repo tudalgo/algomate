@@ -10,8 +10,8 @@ import org.gradle.kotlin.dsl.TaskContainerScope
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
@@ -26,6 +26,15 @@ class AlgoMatePlugin : Plugin<Project> {
 
         // create and configure extensions
         val submissionExtension = target.extensions.create<SubmissionExtension>("submission")
+
+        target.afterEvaluate {
+            if (submissionExtension.requireTests) {
+                target.tasks["mainBuildSubmission"].dependsOn("test")
+            }
+            if (submissionExtension.requireGraderPublic) {
+                target.tasks["mainBuildSubmission"].dependsOn("graderPublicRun")
+            }
+        }
 
         target.extensions.getByType<JavaApplication>().apply {
             mainClass.set(submissionExtension.assignmentIdProperty.map { "$it.Main" })
@@ -61,13 +70,13 @@ class AlgoMatePlugin : Plugin<Project> {
 
         TaskContainerScope.of(target.tasks).apply {
             val runDir = target.file("build/run")
-            named<JavaExec>("run") {
+            withType<JavaExec> {
                 doFirst {
                     runDir.mkdirs()
                 }
                 workingDir = runDir
             }
-            named<Test>("test") {
+            withType<Test> {
                 doFirst {
                     runDir.mkdirs()
                 }
