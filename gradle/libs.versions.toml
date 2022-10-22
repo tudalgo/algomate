@@ -1,10 +1,12 @@
 [versions]
 algoutils = "0.3.1"
-jagr = "0.6.1"
+jagr = "0.6.2"
 junit = "5.9.1"
 kotlin = "1.7.20"
 
 [plugins]
+# jagr-gradle not directly used from catalog, declared here for renovate detection
+jagr-gradle = { id = "org.sourcegrade.jagr-gradle", version.ref = "jagr" }
 gradle-publish = "com.gradle.plugin-publish:1.0.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 style = { id = "org.sourcegrade.style", version = "2.1.0" }
