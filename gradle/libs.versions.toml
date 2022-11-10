@@ -1,5 +1,5 @@
 [versions]
-jagr = "0.6.3"
+jagr = "0.6.4"
 junit = "5.9.1"
 kotlin = "1.7.21"
 
