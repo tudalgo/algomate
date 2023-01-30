@@ -1,6 +1,5 @@
 [versions]
 jagr = "0.8.0"
-junit = "5.9.1"
 kotlin = "1.8.0"
 
 [plugins]
