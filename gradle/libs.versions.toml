@@ -7,4 +7,4 @@ kotlin = "1.8.0"
 jagr-gradle = { id = "org.sourcegrade.jagr-gradle", version.ref = "jagr" }
 gradle-publish = "com.gradle.plugin-publish:1.1.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-style = { id = "org.sourcegrade.style", version = "2.1.0" }
+style = { id = "org.sourcegrade.style", version = "3.0.0" }
