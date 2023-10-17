@@ -1,6 +1,6 @@
 [versions]
 jagr = "0.8.0"
-kotlin = "1.8.0"
+kotlin = "1.9.10"
 
 [plugins]
 # jagr-gradle not directly used from catalog, declared here for renovate detection
