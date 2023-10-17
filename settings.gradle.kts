@@ -6,4 +6,12 @@ dependencyResolutionManagement {
     }
 }
 
+pluginManagement {
+    includeBuild("build-logic")
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = "algomate"

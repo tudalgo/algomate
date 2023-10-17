@@ -1,15 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.sourcegrade.jagr.script.AlgoMatePublishPlugin
 
-@Suppress("DSL_SCOPE_VIOLATION") // https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     `java-gradle-plugin`
     alias(libs.plugins.gradle.publish)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.style)
+    id("algomate-publish")
 }
-
-apply<AlgoMatePublishPlugin>()
 
 group = "org.tudalgo"
 version = file("version").readLines().first()
@@ -40,12 +37,9 @@ gradlePlugin {
             displayName = "AlgoMate"
             description = "Gradle plugin for TU Darmstadt Algorithmik assignments"
             implementationClass = "org.tudalgo.algomate.AlgoMatePlugin"
+            tags = listOf("jagr", "assignment", "submission", "grading")
         }
     }
-}
-
-pluginBundle {
     website = "https://wiki.tudalgo.org"
     vcsUrl = "https://github.com/tudalgo/algomate"
-    tags = listOf("jagr", "assignment", "submission", "grading")
 }
