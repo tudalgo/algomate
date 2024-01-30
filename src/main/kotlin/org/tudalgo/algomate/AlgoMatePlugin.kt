@@ -96,7 +96,7 @@ class AlgoMatePlugin : Plugin<Project> {
             }
             withType<SubmissionWriteInfoTask> {
                 doFirst {
-                    if (!assignmentId.get().matches(".*[a-zA-Z].*".toRegex())) {
+                    if (!studentId.get().matches(".*[a-zA-Z].*".toRegex())) {
                         throw GradleException(
                             """
                             The student ID does not contain a letter.
