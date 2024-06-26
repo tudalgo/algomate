@@ -103,6 +103,12 @@ class AlgoMatePlugin : Plugin<Project> {
                             Are you sure that you haven't entered your matriculation number instead of your student ID?
                             """.trimIndent()
                         )
+                    } else if (!studentId.get().all { !it.isUpperCase() }) {
+                        throw GradleException(
+                            """
+                            The student ID should not contain any uppercase letters.
+                            """.trimIndent()
+                        )
                     }
                 }
             }
