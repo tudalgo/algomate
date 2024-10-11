@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
 abstract class SubmissionExtension @Inject constructor(
-    objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory
 ) {
     internal val studentIdProperty = objectFactory.property<String>()
     internal val firstNameProperty = objectFactory.property<String>()
