@@ -1,10 +1,10 @@
 [versions]
-jagr = "0.10.1"
-kotlin = "1.9.20"
+jagr = "0.10.3"
+kotlin = "2.0.21"
 
 [plugins]
 # jagr-gradle not directly used from catalog, declared here for renovate detection
 jagr-gradle = { id = "org.sourcegrade.jagr-gradle", version.ref = "jagr" }
-gradle-publish = "com.gradle.plugin-publish:1.2.1"
+gradle-publish = "com.gradle.plugin-publish:1.3.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 style = { id = "org.sourcegrade.style", version = "3.0.0" }
