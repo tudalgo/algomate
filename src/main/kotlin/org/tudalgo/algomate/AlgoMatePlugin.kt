@@ -60,7 +60,7 @@ class AlgoMatePlugin : Plugin<Project> {
                     graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
                     graderPublic.configureDependencies {
                         implementation("org.tudalgo:algoutils-tutor:0.7.2")
-                        implementation("org.junit-pioneer:junit-pioneer:2.2.0")
+                        implementation("org.junit-pioneer:junit-pioneer:2.3.0")
                     }
                 }
             }
@@ -68,8 +68,8 @@ class AlgoMatePlugin : Plugin<Project> {
 
         target.dependencies {
             "implementation"("org.tudalgo:algoutils-student:0.7.2")
-            "implementation"("org.jetbrains:annotations:24.0.1")
-            "testImplementation"("org.junit.jupiter:junit-jupiter:5.10.0")
+            "implementation"("org.jetbrains:annotations:26.0.0")
+            "testImplementation"("org.junit.jupiter:junit-jupiter:5.11.2")
         }
 
         TaskContainerScope.of(target.tasks).apply {
