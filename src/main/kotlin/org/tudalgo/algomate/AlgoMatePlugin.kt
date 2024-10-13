@@ -58,10 +58,10 @@ class AlgoMatePlugin : Plugin<Project> {
                 create("graderPublic") { graderPublic ->
                     val id = exerciseExtension.assignmentId
                     val idU = id.map { it.uppercase() }
-                    graderPublic.graderName.set(idU.map { "FOP-2324-$it-Public" })
+                    graderPublic.graderName.set(idU.map { "FOP-2425-$it-Public" })
                     graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
                     graderPublic.configureDependencies {
-                        implementation("org.tudalgo:algoutils-tutor:0.7.2")
+                        implementation("org.tudalgo:algoutils-tutor:0.9.0")
                         implementation("org.junit-pioneer:junit-pioneer:2.3.0")
                     }
                 }
@@ -69,7 +69,7 @@ class AlgoMatePlugin : Plugin<Project> {
         }
 
         target.dependencies {
-            "implementation"("org.tudalgo:algoutils-student:0.7.2")
+            "implementation"("org.tudalgo:algoutils-student:0.9.0")
             "implementation"("org.jetbrains:annotations:26.0.0")
             "testImplementation"("org.junit.jupiter:junit-jupiter:5.11.2")
         }
