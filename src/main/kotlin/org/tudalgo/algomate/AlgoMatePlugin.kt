@@ -19,8 +19,52 @@ import org.sourcegrade.jagr.gradle.task.submission.SubmissionWriteInfoTask
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
 
+/**
+ * The `AlgoMatePlugin` is a Gradle plugin designed to simplify and streamline the setup process for student
+ * assignments and exercise submissions.
+ *
+ * This plugin configures essential project settings, integrates with Jagr for automated grading, and enforce
+ * submission requirements like testing and grader tasks.
+ *
+ * ### Features:
+ * - Applies the `java`, `application`, and `org.sourcegrade.jagr-gradle` plugins.
+ * - Provides extensions for configuring exercise and submission metadata:
+ *   - `ExerciseExtension`: Configures assignment-specific details.
+ *   - `SubmissionExtension`: Configures submission-specific details such as student metadata.
+ * - Automatically configures dependencies required for student and grading functionalities.
+ * - Validates student ID format during submission tasks.
+ * - Sets up common tasks (e.g., `test`, `graderPublicRun`) with dependencies and constraints.
+ *
+ * ### Example Usage:
+ * In the `build.gradle.kts`:
+ * ```kotlin
+ * exercise {
+ *     assignmentId.set("myAssignment")
+ * }
+ * submission {
+ *     studentId = "jd12abcd"
+ *     firstName = "John"
+ *     lastName = "Doe"
+ *     requireTests = true
+ *     requireGraderPublic = true
+ * }
+ * jagr {
+ *     graders {
+ *         val graderPublic by getting {
+ *             ...
+ *         }
+ *         ...
+ *     }
+ * }
+ * ```
+ *
+ * @see ExerciseExtension
+ * @see SubmissionExtension
+ * @see JagrExtension
+ */
 @Suppress("unused")
 class AlgoMatePlugin : Plugin<Project> {
+
     override fun apply(target: Project) {
         // apply plugins
         target.apply(plugin = "java")
