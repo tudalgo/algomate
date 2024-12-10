@@ -8,7 +8,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.TaskContainerScope
-import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
@@ -16,8 +15,17 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
 import org.sourcegrade.jagr.gradle.task.submission.SubmissionWriteInfoTask
+import org.tudalgo.algomate.configuration.Dependency
+import org.tudalgo.algomate.configuration.addDependency
+import org.tudalgo.algomate.configuration.addPlugin
+import org.tudalgo.algomate.configuration.implementation
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
+
+/**
+ * The Java version used for the project.
+ */
+const val JAVA_VERSION = 21
 
 /**
  * The `AlgoMatePlugin` is a Gradle plugin designed to simplify and streamline the setup process for student
@@ -67,14 +75,15 @@ class AlgoMatePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         // apply plugins
-        target.apply(plugin = "java")
-        target.apply(plugin = "application")
-        target.apply(plugin = "org.sourcegrade.jagr-gradle")
+        org.tudalgo.algomate.configuration.Plugin.entries.forEach { target.addPlugin(it) }
 
-        // create and configure extensions
+        // Create and configure extensions
         val exerciseExtension = target.extensions.create<ExerciseExtension>("exercise")
         val submissionExtension = target.extensions.create<SubmissionExtension>("submission")
 
+        // Whether running tests and graderPublic tasks is mandatory for submission
+        // If true, the submission task will depend on the test and graderPublic tasks and enforce their
+        // execution before submission.
         target.afterEvaluate {
             if (submissionExtension.requireTests) {
                 target.tasks["mainBuildSubmission"].dependsOn("test")
@@ -85,11 +94,14 @@ class AlgoMatePlugin : Plugin<Project> {
             }
         }
 
+        // Main class is always set to <assignmentId>.Main class
         target.extensions.getByType<JavaApplication>().apply {
             mainClass.set(exerciseExtension.assignmentId.map { "$it.Main" })
         }
 
+        // Jagr configuration
         target.extensions.getByType<JagrExtension>().apply {
+            // Submission metadata
             assignmentId.set(exerciseExtension.assignmentId)
             submissions {
                 create("main") { main ->
@@ -98,6 +110,7 @@ class AlgoMatePlugin : Plugin<Project> {
                     main.lastName.set(submissionExtension.lastNameProperty)
                 }
             }
+            // Graders configuration
             graders {
                 create("graderPublic") { graderPublic ->
                     val id = exerciseExtension.assignmentId
@@ -105,17 +118,18 @@ class AlgoMatePlugin : Plugin<Project> {
                     graderPublic.graderName.set(idU.map { "FOP-2425-$it-Public" })
                     graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
                     graderPublic.configureDependencies {
-                        implementation("org.tudalgo:algoutils-tutor:0.9.0")
-                        implementation("org.junit-pioneer:junit-pioneer:2.3.0")
+                        addDependency(Dependency.JUNIT_PIONEER)
+                        addDependency(Dependency.ALGOUTILS_TUTOR)
                     }
                 }
             }
         }
 
+        // Student available dependencies
         target.dependencies {
-            "implementation"("org.tudalgo:algoutils-student:0.9.0")
-            "implementation"("org.jetbrains:annotations:26.0.0")
-            "testImplementation"("org.junit.jupiter:junit-jupiter:5.11.2")
+            implementation(Dependency.JUNIT_JUPITER)
+            implementation(Dependency.ALGOUTILS_STUDENT)
+            implementation(Dependency.JETBRAINS_ANNOTATIONS)
         }
 
         TaskContainerScope.of(target.tasks).apply {
@@ -133,11 +147,15 @@ class AlgoMatePlugin : Plugin<Project> {
                 workingDir = runDir
                 useJUnitPlatform()
             }
+
+            // Supported a Java version for the project
             withType<JavaCompile> {
                 options.encoding = "UTF-8"
-                sourceCompatibility = "21"
-                targetCompatibility = "21"
+                sourceCompatibility = JAVA_VERSION.toString()
+                targetCompatibility = JAVA_VERSION.toString()
             }
+
+            // Validation of student ID format
             withType<SubmissionWriteInfoTask> {
                 doFirst {
                     if (!studentId.get().matches(".*[a-zA-Z].*".toRegex())) {

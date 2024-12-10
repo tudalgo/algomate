@@ -14,4 +14,3 @@ abstract class ExerciseExtension {
      */
     abstract val assignmentId: Property<String>
 }
-
