@@ -19,7 +19,7 @@ import javax.inject.Inject
  * }
  * ```
  *
- * @param objectFactory A factory for creating Gradle property objects.
+ * @param objectFactory a factory for creating Gradle property objects.
  */
 abstract class SubmissionExtension @Inject constructor(
     objectFactory: ObjectFactory

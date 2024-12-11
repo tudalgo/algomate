@@ -1,9 +1,11 @@
 package org.tudalgo.algomate
 
 import org.gradle.api.GradleException
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
@@ -13,9 +15,11 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.sourcegrade.jagr.gradle.extension.GraderConfiguration
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
 import org.sourcegrade.jagr.gradle.task.submission.SubmissionWriteInfoTask
 import org.tudalgo.algomate.configuration.Dependency
+import org.tudalgo.algomate.configuration.GitRepository
 import org.tudalgo.algomate.configuration.addDependency
 import org.tudalgo.algomate.configuration.addPlugin
 import org.tudalgo.algomate.configuration.implementation
@@ -26,6 +30,11 @@ import org.tudalgo.algomate.extension.SubmissionExtension
  * The Java version used for the project.
  */
 const val JAVA_VERSION = 21
+
+/**
+ * The course name for the project.
+ */
+const val COURSE_NAME = "FOP-2425"
 
 /**
  * The `AlgoMatePlugin` is a Gradle plugin designed to simplify and streamline the setup process for student
@@ -74,7 +83,7 @@ const val JAVA_VERSION = 21
 class AlgoMatePlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        // apply plugins
+        // Apply plugins
         org.tudalgo.algomate.configuration.Plugin.entries.forEach { target.addPlugin(it) }
 
         // Create and configure extensions
@@ -110,26 +119,28 @@ class AlgoMatePlugin : Plugin<Project> {
                     main.lastName.set(submissionExtension.lastNameProperty)
                 }
             }
-            // Graders configuration
+
+            // Student available dependencies
+            target.dependencies {
+                implementation(Dependency.JUNIT_JUPITER)
+                implementation(Dependency.ALGOUTILS_STUDENT)
+                implementation(Dependency.JETBRAINS_ANNOTATIONS)
+            }
+
+            // Grader configurations
             graders {
-                create("graderPublic") { graderPublic ->
-                    val id = exerciseExtension.assignmentId
-                    val idU = id.map { it.uppercase() }
-                    graderPublic.graderName.set(idU.map { "FOP-2425-$it-Public" })
-                    graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
-                    graderPublic.configureDependencies {
-                        addDependency(Dependency.JUNIT_PIONEER)
-                        addDependency(Dependency.ALGOUTILS_TUTOR)
-                    }
+                val projectName = target.name
+                val repository = GitRepository.entries.first { projectName.endsWith(it.type) }
+                val assignmentNr = projectName.filter { it.isDigit() }.toInt()
+                val graderPublic: GraderConfiguration? = if (repository.containsPublicTests(assignmentNr)) {
+                    createGrader(false, exerciseExtension.assignmentId)
+                } else {
+                    null
+                }
+                if (repository.privateTests) {
+                    createGrader(true, exerciseExtension.assignmentId, graderPublic)
                 }
             }
-        }
-
-        // Student available dependencies
-        target.dependencies {
-            implementation(Dependency.JUNIT_JUPITER)
-            implementation(Dependency.ALGOUTILS_STUDENT)
-            implementation(Dependency.JETBRAINS_ANNOTATIONS)
         }
 
         TaskContainerScope.of(target.tasks).apply {
@@ -173,6 +184,46 @@ class AlgoMatePlugin : Plugin<Project> {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Creates a grader configuration for the given path and type.
+     * If the grader source set does not exist, the configuration is not created which will be indicated by a `null`
+     * return value.
+     *
+     * @param privateTest whether the grader is for private tests
+     * @param id the exercise id (assignment number)
+     * @param parent the parent grader configuration
+     */
+    fun NamedDomainObjectContainer<GraderConfiguration>.createGrader(
+        privateTest: Boolean,
+        id: Property<String>,
+        parent: GraderConfiguration? = null
+    ): GraderConfiguration? {
+        val type = if (privateTest) {
+            "Private"
+        } else {
+            "Public"
+        }
+        return create("grader$type") { grader ->
+            if (parent == null) {
+                grader.configureDependencies {
+                    addDependency(Dependency.JUNIT_PIONEER)
+                    addDependency(Dependency.ALGOUTILS_TUTOR)
+                }
+            } else {
+                grader.parent(parent)
+            }
+
+            val idU = id.map { it.uppercase() }
+            val name = type.replaceFirstChar { it.uppercase() }
+            grader.graderName.set(idU.map { "$COURSE_NAME-$it-$name" })
+            grader.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider$name" })
+            grader.configureDependencies {
+                addDependency(Dependency.JUNIT_PIONEER)
+                addDependency(Dependency.ALGOUTILS_TUTOR)
             }
         }
     }
