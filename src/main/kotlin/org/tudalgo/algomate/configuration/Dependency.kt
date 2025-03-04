@@ -6,9 +6,9 @@ import org.sourcegrade.jagr.gradle.extension.DependencyConfiguration
 /**
  * Represents a dependency for a Gradle project.
  *
- * @property group the group identifier of the dependency.
- * @property artifactName the artifact name of the dependency.
- * @property version the version of the dependency.
+ * @property group the group identifier of the dependency
+ * @property artifactName the artifact name of the dependency
+ * @property version the version of the dependency
  */
 enum class Dependency(
     val group: String,
@@ -54,30 +54,27 @@ enum class Dependency(
 }
 
 /**
- * Adds a dependency to the [DependencyConfiguration] using the specified dependency's notation.
+ * Adds the dependencies to `implementation` configuration in the [DependencyConfiguration].
  *
- * @receiver the [DependencyConfiguration] instance to which the dependency is added.
- * @param dependency the [Dependency] to add.
+ * @receiver the [DependencyConfiguration] instance to which the dependency is added
+ * @param dependencies the dependencies to add
  */
-fun DependencyConfiguration.addDependency(dependency: Dependency) {
-    implementation(dependency.notation)
+fun DependencyConfiguration.dependencies(vararg dependencies: Dependency) = dependencies.forEach {
+    implementation(it.notation)
 }
 
 /**
- * Adds a dependency to the `implementation` configuration in the [DependencyHandlerScope].
- *
- * @receiver the [DependencyHandlerScope] to which the dependency is added.
- * @param dependency the [Dependency] to add.
+ * Adds the dependency to `implementation` configuration in the [DependencyHandlerScope].
+ * @receiver the [DependencyHandlerScope] to which the dependencies are added
+ * @param dependency the dependency to add
  */
-fun DependencyHandlerScope.implementation(dependency: Dependency) {
-    "implementation"(dependency.notation)
-}
+fun DependencyHandlerScope.implementation(dependency: Dependency) = "implementation"(dependency.notation)
 
 /**
  * Adds a dependency to the `testImplementation` configuration in the [DependencyHandlerScope].
  *
- * @receiver the [DependencyHandlerScope] to which the dependency is added.
- * @param dependency the [Dependency] to add.
+ * @receiver the [DependencyHandlerScope] to which the dependency is added
+ * @param dependency the [Dependency] to add
  */
 fun DependencyHandlerScope.testImplementation(dependency: Dependency) {
     "testImplementation"(dependency.notation)

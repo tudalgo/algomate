@@ -7,17 +7,12 @@ import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
-import org.gradle.kotlin.dsl.TaskContainerScope
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
 import org.sourcegrade.jagr.gradle.task.submission.SubmissionWriteInfoTask
 import org.tudalgo.algomate.configuration.Dependency
-import org.tudalgo.algomate.configuration.addDependency
 import org.tudalgo.algomate.configuration.addPlugin
+import org.tudalgo.algomate.configuration.dependencies
 import org.tudalgo.algomate.configuration.implementation
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
@@ -26,6 +21,21 @@ import org.tudalgo.algomate.extension.SubmissionExtension
  * The Java version used for the project.
  */
 const val JAVA_VERSION = 21
+
+/**
+ * The encoding used for the project.
+ */
+const val ENCODING = "UTF-8"
+
+/**
+ * The course name.
+ */
+const val COURSE_NAME = "FOP"
+
+/**
+ * The course year.
+ */
+const val COURSE_YEAR = "2425"
 
 /**
  * The `AlgoMatePlugin` is a Gradle plugin designed to simplify and streamline the setup process for student
@@ -115,11 +125,13 @@ class AlgoMatePlugin : Plugin<Project> {
                 create("graderPublic") { graderPublic ->
                     val id = exerciseExtension.assignmentId
                     val idU = id.map { it.uppercase() }
-                    graderPublic.graderName.set(idU.map { "FOP-2425-$it-Public" })
+                    graderPublic.graderName.set(idU.map { "$COURSE_NAME-$COURSE_YEAR-$it-Public" })
                     graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
                     graderPublic.configureDependencies {
-                        addDependency(Dependency.JUNIT_PIONEER)
-                        addDependency(Dependency.ALGOUTILS_TUTOR)
+                        dependencies(
+                            Dependency.JUNIT_PIONEER,
+                            Dependency.ALGOUTILS_TUTOR
+                        )
                     }
                 }
             }
@@ -150,7 +162,7 @@ class AlgoMatePlugin : Plugin<Project> {
 
             // Supported a Java version for the project
             withType<JavaCompile> {
-                options.encoding = "UTF-8"
+                options.encoding = ENCODING
                 sourceCompatibility = JAVA_VERSION.toString()
                 targetCompatibility = JAVA_VERSION.toString()
             }
