@@ -17,6 +17,7 @@ style = { id = "org.sourcegrade.style", version.ref = "style" }
 jagr-gradle = { id = "org.sourcegrade.jagr-gradle", version.ref = "jagr" }
 
 [libraries]
+# Not directly used from catalog, declared here for renovate detection
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
 junit-pioneer = { group = "org.junit.pioneer", name = "junit-pioneer", version.ref = "junit-pioneer" }
