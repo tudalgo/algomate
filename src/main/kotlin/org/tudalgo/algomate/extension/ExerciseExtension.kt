@@ -7,6 +7,7 @@ import org.gradle.api.provider.Property
  *
  * This extension allows defining metadata for an exercise.
  */
+@Deprecated("The exercise assignment ID will be automatically derived from the project name.")
 abstract class ExerciseExtension {
 
     /**
