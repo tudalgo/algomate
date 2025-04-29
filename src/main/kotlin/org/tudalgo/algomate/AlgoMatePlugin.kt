@@ -16,6 +16,7 @@ import org.tudalgo.algomate.configuration.dependencies
 import org.tudalgo.algomate.configuration.implementation
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
+import org.tudalgo.algomate.task.StudentRepositoryConverterTask
 
 /**
  * The Java version used for the project.
@@ -143,6 +144,9 @@ class AlgoMatePlugin : Plugin<Project> {
             implementation(Dependency.ALGOUTILS_STUDENT)
             implementation(Dependency.JETBRAINS_ANNOTATIONS)
         }
+
+        // Tasks
+        target.tasks.register<StudentRepositoryConverterTask>("toStudentRepository")
 
         TaskContainerScope.of(target.tasks).apply {
             val runDir = target.file("build/run")
