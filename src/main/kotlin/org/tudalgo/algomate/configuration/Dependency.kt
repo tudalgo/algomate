@@ -14,7 +14,6 @@ enum class Dependency(
     val group: String,
     val artifactName: String,
     val version: String,
-    val configuration: String = "implementation"
 ) {
 
     /**
