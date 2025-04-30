@@ -8,6 +8,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.sourcegrade.jagr.gradle.extension.GraderConfiguration
 import org.sourcegrade.jagr.gradle.extension.JagrExtension
 import org.sourcegrade.jagr.gradle.task.submission.SubmissionWriteInfoTask
 import org.tudalgo.algomate.configuration.Dependency
@@ -56,6 +57,7 @@ const val COURSE_YEAR = "2425"
  * ### Example Usage:
  * In the `build.gradle.kts`:
  * ```kotlin
+ * // Deprecated: Assignment ID is now set automatically based on the project name.
  * exercise {
  *     assignmentId.set("myAssignment")
  * }
@@ -83,6 +85,7 @@ const val COURSE_YEAR = "2425"
 @Suppress("unused")
 class AlgoMatePlugin : Plugin<Project> {
 
+
     override fun apply(target: Project) {
         // apply plugins
         org.tudalgo.algomate.configuration.Plugin.entries.forEach { target.addPlugin(it) }
@@ -104,15 +107,23 @@ class AlgoMatePlugin : Plugin<Project> {
             }
         }
 
+        // Format: HXX-Root/HXX-Student/HXX-Review
+        // Task name: HXX
+        val taskName = target.name.substring(0, 3)
+        // Task type = Root/Student/Review
+        val taskType = target.name.substring(4)
+        val assignmentId = taskName.lowercase()
+        val taskNumber = taskName.substring(1).toInt()
+
         // Main class is always set to <assignmentId>.Main class
         target.extensions.getByType<JavaApplication>().apply {
-            mainClass.set(exerciseExtension.assignmentId.map { "$it.Main" })
+            mainClass.set("$assignmentId.Main")
         }
 
         // Jagr configuration
         target.extensions.getByType<JagrExtension>().apply {
             // Submission metadata
-            assignmentId.set(exerciseExtension.assignmentId)
+            this.assignmentId.set(assignmentId)
             submissions {
                 create("main") { main ->
                     main.studentId.set(submissionExtension.studentIdProperty)
@@ -120,19 +131,35 @@ class AlgoMatePlugin : Plugin<Project> {
                     main.lastName.set(submissionExtension.lastNameProperty)
                 }
             }
-            // Graders configuration
+
+            // Creating graders
             graders {
-                create("graderPublic") { graderPublic ->
-                    val id = exerciseExtension.assignmentId
-                    val idU = id.map { it.uppercase() }
-                    graderPublic.graderName.set(idU.map { "$COURSE_NAME-$COURSE_YEAR-$it-Public" })
-                    graderPublic.rubricProviderName.set(id.zip(idU) { a, b -> "$a.${b}_RubricProvider" })
-                    graderPublic.configureDependencies {
-                        dependencies(
-                            Dependency.JUNIT_PIONEER,
-                            Dependency.ALGOUTILS_TUTOR
-                        )
+                fun createGrader(isPrivate: Boolean, parent: GraderConfiguration? = null): GraderConfiguration {
+                    val graderName = "grader" + if (isPrivate) "Private" else "Public"
+                    val type = if (isPrivate) "Private" else "Public"
+                    return create(graderName) { grader ->
+                        grader.graderName.set("$COURSE_NAME-$COURSE_YEAR-$taskName-$type")
+                        grader.rubricProviderName.set("$assignmentId.${taskName}_RubricProvider$type")
+                        if (parent != null) {
+                            grader.parent(parent)
+                        } else {
+                            grader.configureDependencies {
+                                dependencies(
+                                    Dependency.JUNIT_PIONEER,
+                                    Dependency.ALGOUTILS_TUTOR
+                                )
+                            }
+                        }
                     }
+                }
+                // Public tests only available for task number > 9
+                if (taskNumber > 9) {
+                    val graderPublic = createGrader(false)
+                    if (taskType == "Root") {
+                        createGrader(true, graderPublic)
+                    }
+                } else if (taskType == "Root") {
+                    createGrader(true)
                 }
             }
         }
