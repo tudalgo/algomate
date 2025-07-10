@@ -39,6 +39,13 @@ const val COURSE_NAME = "FOP"
 const val COURSE_YEAR = "2425"
 
 /**
+ * The task number from which public tests are available.
+ * This is used to determine whether the public tests should be included in the grader configuration.
+ * Public tests are only available for tasks with a number greater than or equal to this value.
+ */
+const val PUBLIC_TEST_AVAILABLE_FROM_TASK = 10
+
+/**
  * The `AlgoMatePlugin` is a Gradle plugin designed to simplify and streamline the setup process for student
  * assignments and exercise submissions.
  *
@@ -68,6 +75,7 @@ const val COURSE_YEAR = "2425"
  *     requireTests = true
  *     requireGraderPublic = true
  * }
+ * // No longer needed. Only needed if you want to override the default Jagr configuration.
  * jagr {
  *     graders {
  *         val graderPublic by getting {
@@ -152,8 +160,8 @@ class AlgoMatePlugin : Plugin<Project> {
                         }
                     }
                 }
-                // Public tests only available for task number > 9
-                if (taskNumber > 9) {
+                // Public tests only available for task number >= PUBLIC_TEST_AVAILABLE_FROM_TASK
+                if (taskNumber >= PUBLIC_TEST_AVAILABLE_FROM_TASK) {
                     val graderPublic = createGrader(false)
                     if (taskType == "Root") {
                         createGrader(true, graderPublic)
