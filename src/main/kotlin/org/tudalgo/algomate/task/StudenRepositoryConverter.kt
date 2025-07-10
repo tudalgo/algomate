@@ -73,23 +73,23 @@ internal class StudenRepositoryConverter(root: Path) {
             return segments.joinToString(".").replace(".java", "")
         }
 
-
     /**
      * Converts the repository to the original 'student perspective' state.
      */
     fun convert() {
-        // Retrieve the methods to be cleaned up and clean them up
+        // Replace @StudentImplementationRequired methods with a crash statement
         modifiableClasses.values.flatMap {
             it.methods.filter { method -> method.hasAnnotation(StudentImplementationRequired::class.java) }
         }.forEach {
             it.setBody<CtMethod<*>>(it.crashStatement())
         }
 
-        // Remove solution code only constructs
+        // Remove solution code only constructs (classes)
         modifiableClasses.filter { it.value.hasAnnotation(SolutionOnly::class.java) }.forEach {
             modifiableClasses.remove(it.key)
         }
 
+        // Remove solution code only constructs (fields)
         modifiableClasses.values.forEach { clazz ->
             clazz.fields.filter { field ->
                 field.hasAnnotation(SolutionOnly::class.java)
@@ -98,16 +98,7 @@ internal class StudenRepositoryConverter(root: Path) {
             }
         }
 
-        modifiableClasses.values.filter { it.isClass }
-            .map { it as CtClass<*> }
-            .forEach { clazz ->
-                clazz.constructors.filter { constructor ->
-                    constructor.hasAnnotation(SolutionOnly::class.java)
-                }.forEach {
-                    // clazz.removeConstructor(it)
-                }
-            }
-
+        // Remove solution code only constructs (methods)
         modifiableClasses.values.forEach { clazz ->
             clazz.methods.filter { method ->
                 method.hasAnnotation(SolutionOnly::class.java)
@@ -150,7 +141,7 @@ internal class StudenRepositoryConverter(root: Path) {
         val annotation = getAnnotation(StudentImplementationRequired::class.java)
         val taskNumber = annotation.value
         return factory.createCodeSnippetStatement(
-            if (getType().simpleName == "void") {
+            if (type.simpleName == "void") {
                 ""
             } else {
                 "return "
