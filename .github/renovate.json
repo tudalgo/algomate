@@ -1,8 +1,25 @@
 {
   "extends": [
-    "config:base"
+    "config:recommended"
+  ],
+  "configMigration": true,
+  "dependencyDashboard": true,
+  "dependencyDashboardLabels": [
+    "dependency"
   ],
   "addLabels": [
     "dependency"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "src/main/kotlin/**/Dependency.kt"
+      ],
+      "datasourceTemplate": "gradle",
+      "matchStrings": [
+        "[A-Z_]+\\s*\\(\\s*(?:group\\s*=\\s*)?\"(?<packageName>[^\"]+)\"\\s*,\\s*(?:artifactName\\s*=\\s*)?\"(?<depName>[^\"]+)\"\\s*,\\s*(?:version\\s*=\\s*)?\"(?<currentValue>[^\"]+)\"\\s*\\)\\s*[,;]"
+      ]
+    }
   ]
 }
