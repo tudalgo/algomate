@@ -29,16 +29,6 @@ const val JAVA_VERSION = 21
 const val ENCODING = "UTF-8"
 
 /**
- * The course name.
- */
-const val COURSE_NAME = "FOP"
-
-/**
- * The course year.
- */
-const val COURSE_YEAR = "2425"
-
-/**
  * The task number from which public tests are available.
  * This is used to determine whether the public tests should be included in the grader configuration.
  * Public tests are only available for tasks with a number greater than or equal to this value.
@@ -64,10 +54,11 @@ const val PUBLIC_TEST_AVAILABLE_FROM_TASK = 10
  * ### Example Usage:
  * In the `build.gradle.kts`:
  * ```kotlin
- * // Deprecated: Assignment ID is now set automatically based on the project name.
  * exercise {
- *     assignmentId.set("myAssignment")
+ *     courseName = "FOP"
+ *     courseYear = "2627"
  * }
+ *
  * submission {
  *     studentId = "jd12abcd"
  *     firstName = "John"
@@ -75,6 +66,7 @@ const val PUBLIC_TEST_AVAILABLE_FROM_TASK = 10
  *     requireTests = true
  *     requireGraderPublic = true
  * }
+ *
  * // No longer needed. Only needed if you want to override the default Jagr configuration.
  * jagr {
  *     graders {
@@ -92,7 +84,6 @@ const val PUBLIC_TEST_AVAILABLE_FROM_TASK = 10
  */
 @Suppress("unused")
 class AlgoMatePlugin : Plugin<Project> {
-
 
     override fun apply(target: Project) {
         // apply plugins
@@ -146,7 +137,9 @@ class AlgoMatePlugin : Plugin<Project> {
                     val graderName = "grader" + if (isPrivate) "Private" else "Public"
                     val type = if (isPrivate) "Private" else "Public"
                     return create(graderName) { grader ->
-                        grader.graderName.set("$COURSE_NAME-$COURSE_YEAR-$taskName-$type")
+                        grader.graderName.set(exerciseExtension.courseNameProperty.zip(exerciseExtension.courseYearProperty) { courseName, courseYear ->
+                            "$courseName-$courseYear-$taskName-$type"
+                        })
                         grader.rubricProviderName.set("$assignmentId.${taskName}_RubricProvider$type")
                         if (parent != null) {
                             grader.parent(parent)
@@ -195,7 +188,7 @@ class AlgoMatePlugin : Plugin<Project> {
                 useJUnitPlatform()
             }
 
-            // Supported a Java version for the project
+            // Supported Java version and encoding for the project
             withType<JavaCompile> {
                 options.encoding = ENCODING
                 sourceCompatibility = JAVA_VERSION.toString()

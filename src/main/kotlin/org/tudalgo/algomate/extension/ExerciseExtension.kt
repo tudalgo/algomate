@@ -7,11 +7,28 @@ import org.gradle.api.provider.Property
  *
  * This extension allows defining metadata for an exercise.
  */
-@Deprecated("The exercise assignment ID will be automatically derived from the project name.")
 abstract class ExerciseExtension {
 
+    internal abstract val courseNameProperty: Property<String>
+
+    internal abstract val courseYearProperty: Property<String>
+
     /**
-     * The unique identifier (exercise number) for the assignment.
+     * Name of the course to use in the grader name
      */
-    abstract val assignmentId: Property<String>
+    var courseName: String
+        get() = courseNameProperty.get()
+        set(value) = courseNameProperty.set(value)
+
+    /**
+     * Concatenated, shorthand year to use in the grader name
+     */
+    var courseYear: String
+        get() = courseYearProperty.get()
+        set(value) = courseYearProperty.set(value)
+
+    init {
+        courseNameProperty.convention("FOP")
+        courseYearProperty.convention("2627")
+    }
 }
