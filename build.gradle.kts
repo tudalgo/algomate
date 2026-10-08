@@ -14,7 +14,7 @@ version = file("version").readLines().first()
 
 dependencies {
     implementation(gradleKotlinDsl())
-    implementation("org.sourcegrade:jagr-launcher-gradle-plugin:${libs.versions.jagr.get()}")
+    implementation(libs.jagr.gradle)
 }
 
 tasks {

@@ -27,6 +27,11 @@ enum class Dependency(
     JUNIT_JUPITER("org.junit.jupiter", "junit-jupiter", "5.13.3"),
 
     /**
+     * The JUnit platform launcher.
+     */
+    JUNIT_LAUNCHER("org.junit.platform", "junit-platform-launcher", "6.1.3"),
+
+    /**
      * The JUnit Pioneer extension library.
      */
     JUNIT_PIONEER("org.junit-pioneer", "junit-pioneer", "2.3.0"),
