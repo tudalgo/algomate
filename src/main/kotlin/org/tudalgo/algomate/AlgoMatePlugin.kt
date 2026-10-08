@@ -15,6 +15,7 @@ import org.tudalgo.algomate.configuration.Dependency
 import org.tudalgo.algomate.configuration.addPlugin
 import org.tudalgo.algomate.configuration.dependencies
 import org.tudalgo.algomate.configuration.implementation
+import org.tudalgo.algomate.configuration.testImplementation
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
 
@@ -167,7 +168,8 @@ class AlgoMatePlugin : Plugin<Project> {
 
         // Student available dependencies
         target.dependencies {
-            implementation(Dependency.JUNIT_JUPITER)
+            testImplementation(Dependency.JUNIT_JUPITER)
+            testImplementation(Dependency.JUNIT_LAUNCHER)
             implementation(Dependency.ALGOUTILS_STUDENT)
             implementation(Dependency.JETBRAINS_ANNOTATIONS)
         }
