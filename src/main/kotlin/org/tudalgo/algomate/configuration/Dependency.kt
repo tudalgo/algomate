@@ -24,12 +24,12 @@ enum class Dependency(
     /**
      * The JUnit Jupiter testing framework.
      */
-    JUNIT_JUPITER("org.junit.jupiter", "junit-jupiter", "5.13.3"),
+    JUNIT_JUPITER("org.junit.jupiter", "junit-jupiter", "5.12.2"),
 
     /**
      * The JUnit platform launcher.
      */
-    JUNIT_LAUNCHER("org.junit.platform", "junit-platform-launcher", "6.1.3"),
+    JUNIT_LAUNCHER("org.junit.platform", "junit-platform-launcher", "1.12.2"),
 
     /**
      * The JUnit Pioneer extension library.
