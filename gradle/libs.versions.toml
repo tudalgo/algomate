@@ -6,6 +6,8 @@ gradle-publish = "2.2.1"
 kotlin = "2.4.10"
 style = "3.0.0"
 jagr = "0.11.0"
+algoutils = "0.9.0"
+spoon = "11.5.0"
 
 [plugins]
 gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
@@ -14,3 +16,5 @@ style = { id = "org.sourcegrade.style", version.ref = "style" }
 
 [libraries]
 jagr-gradle = { group = "org.sourcegrade", name = "jagr-launcher-gradle-plugin", version.ref = "jagr" }
+algoutils-student = { group = "org.tudalgo", name = "algoutils-student", version.ref = "algoutils" }
+spoon = { group = "fr.inria.gforge.spoon", name = "spoon-core", version.ref = "spoon" }

@@ -15,6 +15,8 @@ version = file("version").readLines().first()
 dependencies {
     implementation(gradleKotlinDsl())
     implementation(libs.jagr.gradle)
+    implementation(libs.algoutils.student)
+    implementation(libs.spoon)
 }
 
 tasks {

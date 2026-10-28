@@ -18,6 +18,7 @@ import org.tudalgo.algomate.configuration.implementation
 import org.tudalgo.algomate.configuration.testImplementation
 import org.tudalgo.algomate.extension.ExerciseExtension
 import org.tudalgo.algomate.extension.SubmissionExtension
+import org.tudalgo.algomate.task.AnnotationProcessorTask
 
 /**
  * The Java version used for the project.
@@ -216,6 +217,11 @@ class AlgoMatePlugin : Plugin<Project> {
                     }
                 }
             }
+        }
+
+        target.tasks.register<AnnotationProcessorTask>("processAnnotations") {
+            assignmentPackage.set(assignmentId)
+            javaVersion.set(JAVA_VERSION)
         }
     }
 }
