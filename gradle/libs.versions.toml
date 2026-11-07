@@ -3,7 +3,7 @@
 
 [versions]
 gradle-publish = "2.2.1"
-kotlin = "2.4.10"
+kotlin = "2.4.21"
 style = "3.0.0"
 jagr = "0.11.0"
 algoutils = "0.9.0"
