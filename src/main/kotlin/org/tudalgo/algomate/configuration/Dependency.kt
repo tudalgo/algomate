@@ -19,7 +19,7 @@ enum class Dependency(
     /**
      * The JetBrains annotations library.
      */
-    JETBRAINS_ANNOTATIONS("org.jetbrains", "annotations", "26.0.2"),
+    JETBRAINS_ANNOTATIONS("org.jetbrains", "annotations", "26.1.0"),
 
     /**
      * The JUnit Jupiter testing framework.
