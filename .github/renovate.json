@@ -3,10 +3,10 @@
     "config:recommended"
   ],
   "configMigration": true,
-  "dependencyDashboard": true,
-  "dependencyDashboardLabels": [
-    "dependency"
-  ],
+  "dependencyDashboard": {
+    "enabled": true,
+    "labels": ["dependency"]
+  },
   "addLabels": [
     "dependency"
   ],
